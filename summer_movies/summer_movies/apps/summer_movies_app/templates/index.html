@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Summer Movies</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'index.css' %}" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- BootStrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"> 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+</head>
+<body>
+        <h1>Summer Movies</h1>
+        <form id="searchForm" action="/search" method="post">
+            {% csrf_token %}
+            Search Bar: <input type="text" name="search">
+            <input type="submit" value="Search">
+        </form>
+    <div id='placeholder'>placeholder</div>
+    <table id="table" class="hidden">
+        <tr>
+            <th>Title</th>
+            <th>Year</th>
+        </tr>
+    </table>
+</body>
+</html>
+<script>
+    $('#searchForm').submit(function(e){
+        console.log("search submitted")
+        console.log($(this).attr('action'));
+        e.preventDefault()
+        $.ajax({
+            url: $(this).attr('action'),
+            method: 'post',
+            data: $(this).serialize(),
+            success: function(serverResponse){
+                $('#placeholder').html(serverResponse)
+                console.log('success', serverResponse)
+                if(serverResponse){
+                var len = serverResponse.length;
+                var txt = "";
+                    if(len > 0){
+                        for(var i=0;i<len;i++){
+                            if(serverResponse[i].title && serverResponse[i].year){
+                                txt += "<tr><td>"+serverResponse[i].title+"</td><td>"+serverResponse[i].year+"</td></tr>";
+                            }
+                        }
+                        if(txt != ""){
+                            $("#table").append(txt).removeClass("hidden");
+                        }
+                    }
+                }
+            }
+        })
+    });
+</script>
