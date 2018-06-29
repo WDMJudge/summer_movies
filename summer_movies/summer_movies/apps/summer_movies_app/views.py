@@ -16,9 +16,9 @@ def index(request):
     return render(request, "index.html")
 
 def search(request):
-    print(request.POST)
+    # print(request.POST)
     user_input = urllib.parse.quote_plus(request.POST['search'])
-    print(user_input)
+    # print(user_input)
     response = requests.get(f"https://api.whatismymovie.com/1.0/?api_key="KEY HERE"&text={user_input}").content
     # print(response)
     return HttpResponse(response, content_type='application/json')

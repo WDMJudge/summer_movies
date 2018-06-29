@@ -15,25 +15,28 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 </head>
 <body>
+    <a name="top_page"></a>
         <h1>Summer Movies</h1>
         <form id="searchForm" action="/search" method="post">
             {% csrf_token %}
             Search Bar: <input type="text" name="search">
             <input type="submit" value="Search">
         </form>
-    <div id='placeholder'>placeholder</div>
+    <div id='placeholder'>Search for stuff</div>
     <table id="table" class="hidden">
         <tr>
             <th>Title</th>
             <th>Year</th>
         </tr>
     </table>
+    <a href="#top_page" id="top" class="hidden">back to top</a>
+    <p id="empty" class="hidden">could not find anything</p>
 </body>
 </html>
 <script>
     $('#searchForm').submit(function(e){
         console.log("search submitted")
-        console.log($(this).attr('action'));
+        // console.log($(this).attr('action'));
         e.preventDefault()
         $.ajax({
             url: $(this).attr('action'),
@@ -45,15 +48,23 @@
                 if(serverResponse){
                 var len = serverResponse.length;
                 var txt = "";
+                $("#table tr td").remove();
                     if(len > 0){
-                        for(var i=0;i<len;i++){
+                        for(var i=0;i<20;i++){
                             if(serverResponse[i].title && serverResponse[i].year){
                                 txt += "<tr><td>"+serverResponse[i].title+"</td><td>"+serverResponse[i].year+"</td></tr>";
                             }
                         }
                         if(txt != ""){
                             $("#table").append(txt).removeClass("hidden");
+                            $("#top").removeClass("hidden");
+                            $("#empty").addClass("hidden");
                         }
+                    }
+                    if(len == 0){
+                        $("#table").addClass("hidden");
+                        $("#top").addClass("hidden");
+                        $("#empty").removeClass("hidden");
                     }
                 }
             }
